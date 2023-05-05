@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import blogService from "./services/blogs";
+import Blogs from "./components/Blogs/listBlogs";
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   useEffect(() => {
     const getAllBlog = async () => {
-      const response = await axios.get("http://localhost:3003/api/blogs");
-      setBlogs(response.data);
+      const response = await blogService.getAll();
+      setBlogs(response);
       return response;
     };
     try {
@@ -14,7 +15,11 @@ const App = () => {
       console.error(error);
     }
   }, []);
-  return <div>Hola, soy App</div>;
+  return (
+    <div>
+      <Blogs blogs={blogs} />
+    </div>
+  );
 };
 
 export default App;
