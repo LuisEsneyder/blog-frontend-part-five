@@ -5,6 +5,8 @@ import Blogs from "./components/Blogs/listBlogs";
 import Login from "./components/login/login";
 import HeadBlog from "./components/Blogs/HeadBlog";
 import FormBlog from "./components/Blogs/FormBlog";
+import Error from "./components/Error";
+import Notificacion from "./components/Notificacion";
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
@@ -13,6 +15,8 @@ const App = () => {
   const [blogTitle, setBlogTitle] = useState("");
   const [blogAuthor, setBlogAuthor] = useState("");
   const [blogUrl, setBlogUrl] = useState("");
+  const [notificacion, setNotificacion] = useState(null);
+  const [error, setError] = useState(null);
   useEffect(() => {
     const getAllBlog = async () => {
       const response = await blogService.getAll();
@@ -22,7 +26,10 @@ const App = () => {
     try {
       getAllBlog();
     } catch (error) {
-      console.error(error);
+      setError(error.response.data.error);
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
     }
   }, []);
   useEffect(() => {
@@ -43,7 +50,12 @@ const App = () => {
       setPassword("");
       setUsername("");
     } catch (error) {
-      console.log("error");
+      setError(error.response.data.error);
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+      setPassword("");
+      setUsername("");
     }
   };
   const logout = () => {
@@ -60,6 +72,10 @@ const App = () => {
       };
       const addBlog = await blogService.create(newBlog);
       setBlogs(blogs.concat(addBlog));
+      setNotificacion(`a new blog ${addBlog.title} by ${addBlog.author}`);
+      setTimeout(() => {
+        setNotificacion(null);
+      }, 5000);
       setBlogAuthor("");
       setBlogTitle("");
       setBlogUrl("");
@@ -67,10 +83,16 @@ const App = () => {
       setBlogAuthor("");
       setBlogTitle("");
       setBlogUrl("");
+      setError(error.response.data.error);
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
     }
   };
   return (
     <div>
+      <Notificacion mensaje={notificacion} />
+      <Error mensaje={error} />
       {!user && (
         <div>
           <h2>log in to application</h2>
