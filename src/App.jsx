@@ -10,12 +10,7 @@ import Notificacion from "./components/Notificacion";
 import Togglable from "./components/Togglable";
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [blogTitle, setBlogTitle] = useState("");
-  const [blogAuthor, setBlogAuthor] = useState("");
-  const [blogUrl, setBlogUrl] = useState("");
   const [notificacion, setNotificacion] = useState(null);
   const [error, setError] = useState(null);
   const refBlogForm = useRef();
@@ -42,50 +37,33 @@ const App = () => {
       setUser(user);
     }
   }, []);
-  const handleLogin = async (event) => {
-    event.preventDefault();
+  const handleLogin = async (objectLogin) => {
     try {
-      const user = await loginService.login({ username, password });
+      const user = await loginService.login(objectLogin);
       window.localStorage.setItem("loggedAppBlog", JSON.stringify(user));
       blogService.setToken(user.token);
       setUser(user);
-      setPassword("");
-      setUsername("");
     } catch (error) {
       setError(error.response.data.error);
       setTimeout(() => {
         setError(null);
       }, 5000);
-      setPassword("");
-      setUsername("");
     }
   };
   const logout = () => {
     window.localStorage.removeItem("loggedAppBlog");
     setUser(null);
   };
-  const handleAddBlog = async (event) => {
-    event.preventDefault();
+  const handleAddBlog = async (objectBlog) => {
     try {
       refBlogForm.current.togglableVisible();
-      const newBlog = {
-        title: blogTitle,
-        url: blogUrl,
-        author: blogAuthor,
-      };
-      const addBlog = await blogService.create(newBlog);
+      const addBlog = await blogService.create(objectBlog);
       setBlogs(blogs.concat(addBlog));
       setNotificacion(`a new blog ${addBlog.title} by ${addBlog.author}`);
       setTimeout(() => {
         setNotificacion(null);
       }, 5000);
-      setBlogAuthor("");
-      setBlogTitle("");
-      setBlogUrl("");
     } catch (error) {
-      setBlogAuthor("");
-      setBlogTitle("");
-      setBlogUrl("");
       setError(error.response.data.error);
       setTimeout(() => {
         setError(null);
@@ -99,28 +77,16 @@ const App = () => {
       {!user && (
         <div>
           <h2>log in to application</h2>
-          <Login
-            username={username}
-            password={password}
-            handlePassword={({ target }) => setPassword(target.value)}
-            handleUsername={({ target }) => setUsername(target.value)}
-            handleLogin={handleLogin}
-          />
+          <Togglable buttonLabel="log in">
+            <Login handleLogin={handleLogin} />
+          </Togglable>
         </div>
       )}
       {user && (
         <div>
           <HeadBlog user={user} loged={logout} />
           <Togglable buttonLabel="new blog" ref={refBlogForm}>
-            <FormBlog
-              blogTitle={blogTitle}
-              blogUrl={blogUrl}
-              blogAuthor={blogAuthor}
-              handleBlogTitle={({ target }) => setBlogTitle(target.value)}
-              handleBlogAutor={({ target }) => setBlogAuthor(target.value)}
-              handleBlogUrl={({ target }) => setBlogUrl(target.value)}
-              handleAddBlog={handleAddBlog}
-            />
+            <FormBlog handleAddBlog={handleAddBlog} />
           </Togglable>
           <Blogs blogs={blogs} />
         </div>
