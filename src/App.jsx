@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
-import Blogs from "./components/Blogs/listBlogs";
+import ListBlogs from "./components/Blogs/listBlogs";
 import Login from "./components/login/login";
 import HeadBlog from "./components/Blogs/HeadBlog";
 import FormBlog from "./components/Blogs/FormBlog";
@@ -70,6 +70,17 @@ const App = () => {
       }, 5000);
     }
   };
+  const likeSumaBlog = async (id, object) => {
+    try {
+      const blogUpdate = await blogService.update(id, object);
+      setBlogs(blogs.map((ele) => (ele.id !== id ? ele : blogUpdate)));
+    } catch (error) {
+      setError(error.response.data.error);
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+    }
+  };
   return (
     <div>
       <Notificacion mensaje={notificacion} />
@@ -88,7 +99,7 @@ const App = () => {
           <Togglable buttonLabel="new blog" ref={refBlogForm}>
             <FormBlog handleAddBlog={handleAddBlog} />
           </Togglable>
-          <Blogs blogs={blogs} />
+          <ListBlogs blogs={blogs} update={likeSumaBlog} />
         </div>
       )}
     </div>

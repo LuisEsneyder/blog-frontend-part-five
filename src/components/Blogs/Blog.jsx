@@ -1,5 +1,5 @@
 import { useState } from "react";
-const Blog = ({ blog }) => {
+const Blog = ({ blog, update }) => {
   const [visible, setVisible] = useState(false);
   const hideBlogDetail = { display: visible ? "none" : "" };
   const showBlogDetail = { display: visible ? "" : "none" };
@@ -13,6 +13,15 @@ const Blog = ({ blog }) => {
   const togglableVisible = () => {
     setVisible(!visible);
   };
+  const blogUpdate = () => {
+    const blogUpdate = {
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes + 1,
+    };
+    update(blog.id, blogUpdate);
+  };
   return (
     <div style={blogStyle}>
       <div style={hideBlogDetail}>
@@ -24,7 +33,7 @@ const Blog = ({ blog }) => {
         <button onClick={togglableVisible}>hide</button>
         <p>{blog.url}</p>
         <p>
-          likes: {blog.likes} <button>like</button>
+          likes: {blog.likes} <button onClick={blogUpdate}>like</button>
         </p>
         <p>{blog.author}</p>
       </div>

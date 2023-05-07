@@ -1,9 +1,9 @@
 import Blog from "./blog";
-const Blogs = ({ blogs }) => {
+const Blogs = ({ blogs, update }) => {
   return (
     <div>
       {blogs.map((blog) => (
-        <Blog blog={blog} key={blog.id} />
+        <Blog blog={blog} update={update} key={blog.id} />
       ))}
     </div>
   );
