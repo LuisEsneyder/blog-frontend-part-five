@@ -1,11 +1,17 @@
 import Blog from "./blog";
-const Blogs = ({ blogs, update }) => {
+const ListBlogs = ({ blogs, update, user, delet }) => {
   return (
     <div>
       {blogs.map((blog) => (
-        <Blog blog={blog} update={update} key={blog.id} />
+        <Blog
+          blog={blog}
+          update={update}
+          key={blog.id}
+          user={user}
+          delet={delet}
+        />
       ))}
     </div>
   );
 };
-export default Blogs;
+export default ListBlogs;

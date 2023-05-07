@@ -81,6 +81,21 @@ const App = () => {
       }, 5000);
     }
   };
+  const delet = async (id) => {
+    try {
+      await blogService.delet(id);
+      setBlogs(blogs.filter((blog) => blog.id !== id));
+      setNotificacion(`remove blog`);
+      setTimeout(() => {
+        setNotificacion(null);
+      }, 5000);
+    } catch (error) {
+      setError(error.response.data.error);
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+    }
+  };
   return (
     <div>
       <Notificacion mensaje={notificacion} />
@@ -102,6 +117,8 @@ const App = () => {
           <ListBlogs
             blogs={blogs.sort((a, b) => b.likes - a.likes)}
             update={likeSumaBlog}
+            user={user}
+            delet={delet}
           />
         </div>
       )}
