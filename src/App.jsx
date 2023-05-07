@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Blogs from "./components/Blogs/listBlogs";
@@ -7,6 +7,7 @@ import HeadBlog from "./components/Blogs/HeadBlog";
 import FormBlog from "./components/Blogs/FormBlog";
 import Error from "./components/Error";
 import Notificacion from "./components/Notificacion";
+import Togglable from "./components/Togglable";
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
@@ -17,6 +18,7 @@ const App = () => {
   const [blogUrl, setBlogUrl] = useState("");
   const [notificacion, setNotificacion] = useState(null);
   const [error, setError] = useState(null);
+  const refBlogForm = useRef();
   useEffect(() => {
     const getAllBlog = async () => {
       const response = await blogService.getAll();
@@ -65,6 +67,7 @@ const App = () => {
   const handleAddBlog = async (event) => {
     event.preventDefault();
     try {
+      refBlogForm.current.togglableVisible();
       const newBlog = {
         title: blogTitle,
         url: blogUrl,
@@ -108,15 +111,17 @@ const App = () => {
       {user && (
         <div>
           <HeadBlog user={user} loged={logout} />
-          <FormBlog
-            blogTitle={blogTitle}
-            blogUrl={blogUrl}
-            blogAuthor={blogAuthor}
-            handleBlogTitle={({ target }) => setBlogTitle(target.value)}
-            handleBlogAutor={({ target }) => setBlogAuthor(target.value)}
-            handleBlogUrl={({ target }) => setBlogUrl(target.value)}
-            handleAddBlog={handleAddBlog}
-          />
+          <Togglable buttonLabel="new blog" ref={refBlogForm}>
+            <FormBlog
+              blogTitle={blogTitle}
+              blogUrl={blogUrl}
+              blogAuthor={blogAuthor}
+              handleBlogTitle={({ target }) => setBlogTitle(target.value)}
+              handleBlogAutor={({ target }) => setBlogAuthor(target.value)}
+              handleBlogUrl={({ target }) => setBlogUrl(target.value)}
+              handleAddBlog={handleAddBlog}
+            />
+          </Togglable>
           <Blogs blogs={blogs} />
         </div>
       )}
